@@ -1,0 +1,2 @@
+pymongo==3.4.0
+Logbook=1.0.0
