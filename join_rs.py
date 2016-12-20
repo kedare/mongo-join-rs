@@ -54,7 +54,6 @@ def join_rs(rs_client: pymongo.MongoClient, my_hostname: str, hidden:bool=False,
         }
         
         config["members"].append(new_member)
-        config["version"] = config["version"] + 1
 
         logger.info("Joining RS")
     else:
@@ -66,6 +65,8 @@ def join_rs(rs_client: pymongo.MongoClient, my_hostname: str, hidden:bool=False,
             ][0]
         )
         logger.info("Leaving RS")
+    
+    config["version"] = config["version"] + 1
     rs_client.admin.command("replSetReconfig", config)
     logger.info("Done!")
 
