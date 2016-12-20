@@ -14,7 +14,7 @@ import argparse
 logbook.StreamHandler(sys.stdout).push_application()
 logger = logbook.Logger("JoinRs")
 
-def join_rs(rs_client: pymongo.MongoClient, my_hostname: str, hidden:bool=False, priority:float=1.0):
+def join_rs(rs_client: pymongo.MongoClient, my_hostname: str, hidden:bool=False, priority:float=1.0, leave:bool=False):
     """
     Connect to the RS using rs_client, and then add my_hostname (That is by default the host running this script) to the RS)
     """
@@ -37,25 +37,35 @@ def join_rs(rs_client: pymongo.MongoClient, my_hostname: str, hidden:bool=False,
     logger.info("Current RS configuration:\r\n{rs}".format(
         rs=pprint.pformat(config)
     ))
-    last_id_result = list(rs_client.local.system.replset.aggregate(pipeline))
-    last_id = last_id_result[0]["max"]
-    next_id = last_id + 1
-    logger.info("Last ID is [{last_id}], Next ID will be [{next_id}]".format(
-        last_id=last_id,
-        next_id=next_id
-    ))
+    if not leave:
+        last_id_result = list(rs_client.local.system.replset.aggregate(pipeline))
+        last_id = last_id_result[0]["max"]
+        next_id = last_id + 1
+        logger.info("Last ID is [{last_id}], Next ID will be [{next_id}]".format(
+            last_id=last_id,
+            next_id=next_id
+        ))
 
-    new_member = {
-        "_id": next_id,
-        "host": "{hostname}:27017".format(hostname=my_hostname),
-        "priority": priority,
-        "hidden": hidden
-    }
-    
-    config["members"].append(new_member)
-    config["version"] = config["version"] + 1
+        new_member = {
+            "_id": next_id,
+            "host": "{hostname}:27017".format(hostname=my_hostname),
+            "priority": priority,
+            "hidden": hidden
+        }
+        
+        config["members"].append(new_member)
+        config["version"] = config["version"] + 1
 
-    logger.info("Joining RS")
+        logger.info("Joining RS")
+    else:
+        config["members"].remove(
+            [
+                key 
+                for key in config["members"] 
+                if key["host"] == "{hostname}:27017".format(hostname=my_hostname)
+            ][0]
+        )
+        logger.info("Leaving RS")
     rs_client.admin.command("replSetReconfig", config)
     logger.info("Done!")
 
@@ -98,6 +108,13 @@ def main():
         default=False
     )
 
+    parser.add_argument(
+        "--leave",
+        help="Leave the RS instead of joining it",
+        action="store_true",
+        default=False
+    )
+
     args = parser.parse_args()
 
     client = pymongo.MongoClient(
@@ -111,7 +128,8 @@ def main():
         client,
         args.hostname,
         args.hidden,
-        args.priority
+        args.priority,
+        args.leave
     )
 
 main()

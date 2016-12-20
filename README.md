@@ -65,3 +65,5 @@ PS C:\Users\mathieu.poussin\Desktop> python .\join_rs.py --connection-string "mo
 [2016-12-19 16:38:31.556565] INFO: JoinRs: Joining RS
 [2016-12-19 16:38:31.999751] INFO: JoinRs: Done!
 ```
+
+I can also be used with "--leave" to leave the RS instead of joining it.
