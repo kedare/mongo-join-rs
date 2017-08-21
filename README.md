@@ -9,7 +9,7 @@ You first have to make sure that the new host has correct configuration (Authent
 Here is an example of run :
 
 ```
-PS C:\Users\mathieu.poussin\Desktop> python .\join_rs.py --connection-string "mongodb://admin:admin@10.75.50.40,10.74.50.50,10.75.50.51/admin" --ssl --hostname 10.10.0.66 --priority 0.0 --hidden
+PS C:\Users\mathieu.poussin\Desktop> mongo_join_rs --connection-string "mongodb://admin:admin@10.75.50.40,10.74.50.50,10.75.50.51/admin" --ssl --hostname 10.10.0.66 --priority 0.0 --hidden
 [2016-12-19 16:38:30.637167] INFO: JoinRs: Connecting to existing RS
 [2016-12-19 16:38:30.638168] INFO: JoinRs: Connected !
 [2016-12-19 16:38:30.638668] INFO: JoinRs: Determinating ID for the new host
