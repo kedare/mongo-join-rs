@@ -9,7 +9,7 @@ setup(
     author_email="mathieu.poussin@netyxia.net",
     setup_requires=['setuptools-markdown'],
     long_description_markdown_filename='README.md',
-    keywords="mongodb mongo autoscaling automation"
+    keywords="mongodb mongo autoscaling automation",
     url="https://github.com/kedare/mongo-join-rs",
     classifiers = [
         "Operating System :: OS Independent",
